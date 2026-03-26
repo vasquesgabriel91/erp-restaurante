@@ -1,17 +1,18 @@
-version: "3.9"
+version: '3.9'
 services:
   app:
     build: .
     container_name: app_backend
     ports:
-      - "3333:3333"
+      - '3333:3333'
     volumes:
       - .:/app
-    depends_on:
-      - db
     env_file:
       - .env
-    command: sh -c "npx prisma migrate dev && npm run dev"
+    depends_on:
+      - db
+
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run start"
 
   db:
     image: postgres:15
@@ -22,7 +23,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: app_db
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
