@@ -7,8 +7,8 @@ services:
       - '3333:3333'
     volumes:
       - .:/app
-      - /app/node_modules    
-      - /app/prisma              
+      - /app/node_modules
+      - /app/prisma
     env_file:
       - .env
     depends_on:
@@ -29,7 +29,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
