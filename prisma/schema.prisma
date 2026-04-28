@@ -7,7 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 datasource db {
   provider = "postgresql"
 }
@@ -18,12 +17,55 @@ enum Role {
   GARCOM
 }
 
-
-model User { 
-  id   String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userName String  @unique
-  passWord String  
-  role Role  
+model User {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userName  String   @unique
+  passWord  String
+  role      Role
   createdAt DateTime @default(now())
-} 
+}
 
+model Product {
+  id_product       String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  unit_measurement Float
+  current_quantity Float
+  minimum_quantity Float
+  purchase_items   Purchase_items[]
+  product_supplier Product_supplier[]
+  createdAt        DateTime         @default(now())
+}
+
+model Purchase {
+  id_purchase    String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  total_price    Float
+  date           String
+  purchase_items Purchase_items[]
+  createdAt      DateTime         @default(now())
+}
+
+model Purchase_items {
+  id_purchase_items String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_product        String   @db.Uuid
+  id_purchase       String   @db.Uuid
+  product           Product  @relation(fields: [id_product], references: [id_product])
+  purchase          Purchase @relation(fields: [id_purchase], references: [id_purchase])
+  unit_price        Float
+  quantity          Float
+}
+
+model Supplier {
+  id_supplier String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  cnpj        String   @unique
+  createdAt   DateTime @default(now())
+  product_supplier Product_supplier[]
+}
+
+model Product_supplier {
+  id_product_supplier String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_product          String   @db.Uuid
+  id_supplier         String   @db.Uuid
+  product             Product  @relation(fields: [id_product], references: [id_product])
+  supplier            Supplier @relation(fields: [id_supplier], references: [id_supplier])
+}
