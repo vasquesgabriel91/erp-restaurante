@@ -1,13 +1,18 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { CreateProductUseCase } from './useCases/ProductUseCase';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { ProductUseCase } from './useCases/ProductUseCase';
 import { CreateProductDto } from './dto/CreateProductDto';
 
 @Controller('product')
 export class ProductController {
-  constructor(private createProductUseCase: CreateProductUseCase) {}
+  constructor(private ProductUseCase: ProductUseCase) {}
 
   @Post()
   async create(@Body() body: CreateProductDto) {
-    return this.createProductUseCase.execute(body);
+    return this.ProductUseCase.execute(body);
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: string) {
+    return this.ProductUseCase.getById(id);
   }
 }

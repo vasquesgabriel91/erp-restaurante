@@ -16,9 +16,22 @@ export class ProductRepository {
       });
     }
   }
+
   async findByName(name: string): Promise<Product | null> {
     return this.prisma.product.findFirst({
       where: { name },
+    });
+  }
+
+  async findById(id: string): Promise<Product | null> {
+    return this.prisma.product.findUnique({
+      where: { id_product: id },
+    });
+  }
+
+  async deleteProduct(id: string): Promise<Product> {
+    return this.prisma.product.delete({
+      where: { id_product: id },
     });
   }
 }

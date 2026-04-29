@@ -1,10 +1,14 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ProductRepository } from '../repository/ProductRepository';
 import { CreateProductDto } from '../dto/CreateProductDto';
 import { Product } from '@prisma/client';
 
 @Injectable()
-export class CreateProductUseCase {
+export class ProductUseCase {
   constructor(private productRepository: ProductRepository) {}
 
   async execute(data: CreateProductDto): Promise<Product> {
@@ -26,5 +30,15 @@ export class CreateProductUseCase {
       ...data,
       name,
     });
+  }
+
+  async getById(id: string) {
+    const product = await this.productRepository.findById(id);
+
+    if (!product) {
+      throw new NotFoundException('Produto não encontrado');
+    }
+
+    return product;
   }
 }
