@@ -1,0 +1,30 @@
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { ProductRepository } from '../repository/ProductRepository';
+import { CreateProductDto } from '../dto/CreateProductDto';
+import { Product } from '@prisma/client';
+
+@Injectable()
+export class CreateProductUseCase {
+  constructor(private productRepository: ProductRepository) {}
+
+  async execute(data: CreateProductDto): Promise<Product> {
+    const name = data.name.trim().toLowerCase();
+
+    const validUnits = ['kg', 'g', 'un', 'l', 'ml'];
+    if (!validUnits.includes(data.unit_measurement))
+      throw new BadRequestException('Unidade de medida inválida');
+
+    if (data.current_quantity < data.minimum_quantity)
+      throw new BadRequestException(
+        'Quantidade atual não pode ser menor que a mínima',
+      );
+
+    const productExists = await this.productRepository.findByName(name);
+    if (productExists) throw new BadRequestException('Produto já existe');
+
+    return this.productRepository.createProduct({
+      ...data,
+      name,
+    });
+  }
+}

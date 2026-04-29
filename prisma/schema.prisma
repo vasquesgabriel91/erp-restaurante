@@ -28,7 +28,7 @@ model User {
 model Product {
   id_product       String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name             String
-  unit_measurement Float
+  unit_measurement String
   current_quantity Float
   minimum_quantity Float
   purchase_items   Purchase_items[]
