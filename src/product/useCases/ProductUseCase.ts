@@ -41,4 +41,8 @@ export class ProductUseCase {
 
     return product;
   }
+
+  async getAll() {
+    return this.productRepository.findAll();
+  }
 }

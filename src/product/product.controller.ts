@@ -15,4 +15,9 @@ export class ProductController {
   async findById(@Param('id') id: string) {
     return this.ProductUseCase.getById(id);
   }
+
+  @Get()
+  async getAll() {
+    return this.ProductUseCase.getAll();
+  }
 }

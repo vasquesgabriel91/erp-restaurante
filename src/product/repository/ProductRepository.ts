@@ -34,4 +34,8 @@ export class ProductRepository {
       where: { id_product: id },
     });
   }
+
+  async findAll(): Promise<Product[]> {
+    return this.prisma.product.findMany();
+  }
 }
