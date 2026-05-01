@@ -6,30 +6,31 @@ import {
 import { ProductRepository } from '../repository/ProductRepository';
 import { CreateProductDto } from '../dto/CreateProductDto';
 import { Product } from '@prisma/client';
+import { ProductValidator } from '../domain/ProductValidator';
 
 @Injectable()
 export class ProductUseCase {
   constructor(private productRepository: ProductRepository) {}
 
   async execute(data: CreateProductDto): Promise<Product> {
-    const name = data.name.trim().toLowerCase();
+    try {
+      const validatedData = ProductValidator.validate(data);
 
-    const validUnits = ['kg', 'g', 'un', 'l', 'ml'];
-    if (!validUnits.includes(data.unit_measurement))
-      throw new BadRequestException('Unidade de medida inválida');
-
-    if (data.current_quantity < data.minimum_quantity)
-      throw new BadRequestException(
-        'Quantidade atual não pode ser menor que a mínima',
+      const productExists = await this.productRepository.findByName(
+        validatedData.name,
       );
+      if (productExists) {
+        throw new BadRequestException('Produto já existe');
+      }
 
-    const productExists = await this.productRepository.findByName(name);
-    if (productExists) throw new BadRequestException('Produto já existe');
+      return this.productRepository.createProduct(validatedData);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
 
-    return this.productRepository.createProduct({
-      ...data,
-      name,
-    });
+      throw new BadRequestException('Erro inesperado');
+    }
   }
 
   async getById(id: string): Promise<Product> {
@@ -50,20 +51,15 @@ export class ProductUseCase {
     const product = await this.productRepository.findById(id);
     if (!product) throw new NotFoundException('Produto não encontrado');
 
-    const name = data.name.trim().toLowerCase();
-
-    const validUnits = ['kg', 'g', 'un', 'l', 'ml'];
-    if (!validUnits.includes(data.unit_measurement))
-      throw new BadRequestException('Unidade de medida inválida');
-    if (data.current_quantity < data.minimum_quantity)
-      throw new BadRequestException(
-        'Quantidade atual não pode ser menor que a mínima',
-      );
-
-    return this.productRepository.createProduct({
-      ...data,
-      name,
-    });
+    try {
+      const validatedData = ProductValidator.validate(data);
+      return this.productRepository.update(id, validatedData);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Erro inesperado');
+    }
   }
 
   async delete(id: string): Promise<Product> {

@@ -38,4 +38,11 @@ export class ProductRepository {
   async findAll(): Promise<Product[]> {
     return this.prisma.product.findMany();
   }
+
+  async update(id: string, data: Prisma.ProductUpdateInput): Promise<Product> {
+    return this.prisma.product.update({
+      where: { id_product: id },
+      data,
+    });
+  }
 }
