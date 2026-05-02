@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProductRepository {
   constructor(private prisma: PrismaService) {}
 
-  createProduct(data: Prisma.ProductCreateInput): Promise<Product> {
+  async createProduct(data: Prisma.ProductCreateInput): Promise<Product> {
     try {
       return this.prisma.product.create({ data });
     } catch (error) {
