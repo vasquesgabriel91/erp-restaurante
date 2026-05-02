@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Prisma, Supplier } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -12,10 +16,10 @@ export class SupplierRepository {
       });
       return supplier;
     } catch (error) {
-      throw new InternalServerErrorException({
-        message: 'Erro ao criar fornecedor no repositório',
-        error: error instanceof Error ? error.message : 'unknown',
-      });
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Erro inesperado');
     }
   }
 
@@ -25,11 +29,21 @@ export class SupplierRepository {
         where: { name },
       });
       return supplier;
-    } catch (error: unknown) {
-      throw new InternalServerErrorException({
-        message: 'Erro ao buscar fornecedor por nome no repositório',
-        error: error instanceof Error ? error.message : String(error),
-      });
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Erro inesperado');
     }
+  }
+  async findAll(): Promise<Supplier[]> {
+    return await this.prisma.supplier.findMany();
+  }
+
+  async findById(id: string): Promise<Supplier | null> {
+    return await this.prisma.supplier.findUnique({
+      where: { id_supplier: id },
+    });
   }
 }

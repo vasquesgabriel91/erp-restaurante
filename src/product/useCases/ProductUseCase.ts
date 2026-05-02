@@ -51,15 +51,8 @@ export class ProductUseCase {
     const product = await this.productRepository.findById(id);
     if (!product) throw new NotFoundException('Produto não encontrado');
 
-    try {
-      const validatedData = ProductValidator.validate(data);
-      return this.productRepository.update(id, validatedData);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Erro inesperado');
-    }
+    const validatedData = ProductValidator.validate(data);
+    return this.productRepository.update(id, validatedData);
   }
 
   async delete(id: string): Promise<Product> {

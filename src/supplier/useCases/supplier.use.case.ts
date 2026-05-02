@@ -1,4 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { SupplierRepository } from '../repository/supplier.repository';
 import { SupplierDto } from '../dto/supplier.dto';
 import { Supplier } from '@prisma/client';
@@ -16,5 +21,18 @@ export class SupplierUseCase {
       name,
       cnpj: data.cnpj,
     });
+  }
+  async getAll(): Promise<Supplier[]> {
+    return this.SupplierRepository.findAll();
+  }
+  async findById(id: string): Promise<Supplier> {
+    const supplierById = await this.SupplierRepository.findById(id);
+    if (!supplierById) {
+      throw new HttpException(
+        'Fornecedor não encontrado',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return supplierById;
   }
 }
