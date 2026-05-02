@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { SupplierDto } from './dto/supplier.dto';
 import { SupplierUseCase } from './useCases/supplier.use.case';
 import { AuthGuard } from '../auth/guards/auth.guard';
@@ -28,5 +36,11 @@ export class SupplierController {
   @Get(':id')
   async findById(@Param('id') id: string) {
     return this.SupplierUseCase.findById(id);
+  }
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('GERENTE', 'BALCONISTA')
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.SupplierUseCase.delete(id);
   }
 }

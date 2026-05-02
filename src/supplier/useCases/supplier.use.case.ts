@@ -35,4 +35,11 @@ export class SupplierUseCase {
     }
     return supplierById;
   }
+
+  async delete(id: string): Promise<Supplier | null> {
+    const supplierById = await this.SupplierRepository.findById(id);
+    if (!supplierById) throw new ConflictException('Fornecedor não encontrado');
+
+    return this.SupplierRepository.delete(id);
+  }
 }
