@@ -47,9 +47,25 @@ export class SupplierRepository {
     });
   }
 
+  async findByCnpj(cnpj: string): Promise<Supplier | null> {
+    return await this.prisma.supplier.findUnique({
+      where: { cnpj },
+    });
+  }
+
   async delete(id: string): Promise<Supplier | null> {
     return await this.prisma.supplier.delete({
       where: { id_supplier: id },
+    });
+  }
+
+  async update(
+    id: string,
+    data: Prisma.SupplierUpdateInput,
+  ): Promise<Supplier | null> {
+    return await this.prisma.supplier.update({
+      where: { id_supplier: id },
+      data,
     });
   }
 }

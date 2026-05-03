@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { SupplierDto } from './dto/supplier.dto';
@@ -42,5 +43,12 @@ export class SupplierController {
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return this.SupplierUseCase.delete(id);
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('GERENTE', 'BALCONISTA')
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() body: SupplierDto) {
+    return this.SupplierUseCase.update(id, body);
   }
 }

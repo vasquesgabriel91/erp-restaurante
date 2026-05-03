@@ -11,14 +11,21 @@ import { Supplier } from '@prisma/client';
 export class SupplierUseCase {
   constructor(private SupplierRepository: SupplierRepository) {}
 
-  async execute(data: SupplierDto): Promise<Supplier> {
-    const name = data.name.trim().toLowerCase();
-    const supplierExists = await this.SupplierRepository.findByName(name);
+  private async validateSupplierCnpjAndName(name: string, cnpj: string) {
+    const nameSupplier = name.trim().toLowerCase();
+    const supplierExists =
+      await this.SupplierRepository.findByName(nameSupplier);
 
     if (supplierExists) throw new ConflictException('Fornecedor já existe');
 
+    const cnpjExists = await this.SupplierRepository.findByCnpj(cnpj);
+    if (cnpjExists) throw new ConflictException('CNPJ já cadastrado');
+  }
+
+  async execute(data: SupplierDto): Promise<Supplier> {
+    await this.validateSupplierCnpjAndName(data.name, data.cnpj);
     return this.SupplierRepository.createSupplier({
-      name,
+      name: data.name.trim().toLowerCase(),
       cnpj: data.cnpj,
     });
   }
@@ -41,5 +48,21 @@ export class SupplierUseCase {
     if (!supplierById) throw new ConflictException('Fornecedor não encontrado');
 
     return this.SupplierRepository.delete(id);
+  }
+
+  async update(id: string, data: SupplierDto): Promise<Supplier | null> {
+    await this.validateSupplierCnpjAndName(data.name, data.cnpj);
+    const updateSupplier = await this.SupplierRepository.update(id, {
+      name: data.name.trim().toLowerCase(),
+      cnpj: data.cnpj,
+    });
+
+    if (!updateSupplier) {
+      throw new HttpException(
+        'Erro ao atualizar fornecedor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    return updateSupplier;
   }
 }
