@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SupplierDto } from './dto/supplier.dto';
-import { SupplierUseCase } from './useCases/supplier.use.case';
+import { SupplierUseCase } from './useCase/supplier.usecase';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorators';

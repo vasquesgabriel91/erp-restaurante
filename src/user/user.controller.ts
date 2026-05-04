@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { CreateUserDto } from './dto/CreateUserDto';
-import { CreateUserUseCase } from './UseCases/CreateUserUseCase';
+import { CreateUserDto } from './dto/createuser.dto';
+import { CreateUserUseCase } from './UseCase/createuser.usecase';
 import { Role } from '@prisma/client';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';

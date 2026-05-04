@@ -3,10 +3,10 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { ProductRepository } from '../repository/ProductRepository';
-import { CreateProductDto } from '../dto/CreateProductDto';
+import { ProductRepository } from '../repository/product.repository';
+import { CreateProductDto } from '../dto/createproduct.dto';
 import { Product } from '@prisma/client';
-import { ProductValidator } from '../domain/ProductValidator';
+import { ProductValidator } from '../domain/product.validator';
 
 @Injectable()
 export class ProductUseCase {

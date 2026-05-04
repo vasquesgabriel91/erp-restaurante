@@ -7,8 +7,8 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ProductUseCase } from './useCases/ProductUseCase';
-import { CreateProductDto } from './dto/CreateProductDto';
+import { ProductUseCase } from './useCases/product.usecase';
+import { CreateProductDto } from './dto/createproduct.dto';
 import { Product } from '@prisma/client';
 
 @Controller('product')

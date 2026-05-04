@@ -7,7 +7,13 @@ import 'reflect-metadata';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   console.log('PORT:', process.env.PORT);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
   await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
   console.log('App rodando!');
 }
