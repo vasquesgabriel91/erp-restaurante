@@ -1,3 +1,4 @@
+import { UnitConverter } from '../domain/converter.unit.measurement';
 import { PurchaseDto } from '../dto/purchase.dto';
 import { PurchaseRepository } from '../repository/purchase.repository';
 import { Injectable } from '@nestjs/common';
@@ -11,25 +12,41 @@ export class PurchaseUseCase {
 
     const products = await this.PurchaseRepository.getAllProducts(idProducts);
 
-    const purchaseItems = products.map((p) => ({
-      id: p.id_product,
-      unit: p.unit_measurement,
-    }));
+    // transforma banco em lookup rápido
+    const dbMap = new Map(
+      products.map((p) => [p.id_product, p.unit_measurement]),
+    );
 
-    // itens enviados na requisição
-    const requestItems = data.items.map((i) => ({
-      id: i.id_product,
-      unit: i.unit_measurement,
-    }));
+    const result = data.items
+      .map((req) => {
+        const unitdb = dbMap.get(req.id_product);
+        const unitPrice = req.unit_price;
 
-    // pegar apenas os diferentes
-    const differentItems = requestItems.filter((reqItem) => {
-      const dbItem = purchaseItems.find((p) => p.id === reqItem.id);
+        if (!unitdb) return null;
 
-      // se não existir ou for diferente → mantém
-      return dbItem && dbItem.unit !== reqItem.unit;
-    });
+        // valida se pode converter
+        const convertedValue =
+          req.unit_measurement === unitdb
+            ? req.quantity
+            : UnitConverter.convert(
+                req.quantity,
+                req.unit_measurement,
+                unitdb as any,
+              );
 
-    return differentItems;
+        return {
+          id: req.id_product,
+          originalUnit: req.unit_measurement,
+          dbUnit: unitdb,
+          quantity: convertedValue,
+          unitPrice,
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+    const total = result.reduce((acc, item) => acc + item.unitPrice, 0);
+    return {
+      items: result,
+      total,
+    };
   }
 }

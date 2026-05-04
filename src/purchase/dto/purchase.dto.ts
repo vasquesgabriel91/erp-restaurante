@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import type { Unit } from '../domain/converter.unit.measurement';
 
 export class PurchaseItemDto {
   @IsString({ message: 'O campo id do produto é obrigatório' })
@@ -22,7 +23,7 @@ export class PurchaseItemDto {
 
   @IsNotEmpty({ message: 'O campo unidade de medida é obrigatório' })
   @IsString()
-  unit_measurement!: string;
+  unit_measurement!: Unit;
 }
 
 export class PurchaseDto {
