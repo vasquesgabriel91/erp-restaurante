@@ -20,4 +20,9 @@ export class PurchaseRepository {
   async createManyPurchaseItems(data: Prisma.Purchase_itemsCreateManyInput[]) {
     return await this.prisma.purchase_items.createMany({ data });
   }
+  async createManyProductSupplier(
+    data: Prisma.Product_supplierCreateManyInput[],
+  ) {
+    return await this.prisma.product_supplier.createMany({ data });
+  }
 }

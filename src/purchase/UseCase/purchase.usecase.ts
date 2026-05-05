@@ -55,12 +55,18 @@ export class PurchaseUseCase {
     });
     const purchaseId = purchase.id_purchase;
 
-    await this.PurchaseRepository.createManyPurchaseItems(
+    const purchaseItems = await this.PurchaseRepository.createManyPurchaseItems(
       result.map((item) => ({
         id_purchase: purchaseId,
         id_product: item.id,
         quantity: item.quantity,
         unit_price: item.unitPrice,
+      })),
+    );
+    await this.PurchaseRepository.createManyProductSupplier(
+      result.map((item) => ({
+        id_supplier: idSupplier,
+        id_product: item.id,
       })),
     );
     return {
