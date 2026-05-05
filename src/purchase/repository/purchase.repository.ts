@@ -32,4 +32,9 @@ export class PurchaseRepository {
       },
     });
   }
+  async createStockMovement(
+    data: Prisma.Movement_stockCreateManyInput[],
+  ): Promise<Prisma.BatchPayload> {
+    return await this.prisma.movement_stock.createMany({ data });
+  }
 }

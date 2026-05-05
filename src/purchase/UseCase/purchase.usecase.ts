@@ -71,6 +71,7 @@ export class PurchaseUseCase {
         id_product: item.id,
       })),
     );
+    await this.processedItemForStock(result);
     return {
       dataCompra,
       items: result,
@@ -107,5 +108,16 @@ export class PurchaseUseCase {
     }
 
     return hash;
+  }
+
+  async processedItemForStock(item: { id: string; quantity: number }[]) {
+    const itemProcessed = item.map((i) => ({
+      id_product: i.id,
+      quantity: i.quantity,
+      type: 'in',
+      origin: 'purchase',
+    }));
+
+    return await this.PurchaseRepository.createStockMovement(itemProcessed);
   }
 }

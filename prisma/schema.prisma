@@ -33,6 +33,7 @@ model Product {
   minimum_quantity Float
   purchase_items   Purchase_items[]
   product_supplier Product_supplier[]
+  movement_stock   Movement_stock[]
   createdAt        DateTime         @default(now())
 }
 
@@ -72,4 +73,14 @@ model Product_supplier {
   id_supplier         String   @db.Uuid
   product             Product  @relation(fields: [id_product], references: [id_product])
   supplier            Supplier @relation(fields: [id_supplier], references: [id_supplier])
+}
+
+model Movement_stock {
+  id_movement_stock String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_product        String   @db.Uuid
+  quantity          Float
+  type              String
+  origin            String
+  createdAt         DateTime @default(now())
+  product           Product  @relation(fields: [id_product], references: [id_product])
 }
