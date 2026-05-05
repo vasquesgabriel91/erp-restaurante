@@ -1,7 +1,8 @@
 import { UnitConverter } from '../domain/converter.unit.measurement';
 import { PurchaseDto } from '../dto/purchase.dto';
 import { PurchaseRepository } from '../repository/purchase.repository';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
+import crypto from 'crypto';
 
 @Injectable()
 export class PurchaseUseCase {
@@ -43,10 +44,11 @@ export class PurchaseUseCase {
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
     const total = result.reduce((acc, item) => acc + item.unitPrice, 0);
-
+    const hash = await this.createHash(data, result);
     const purchase = await this.PurchaseRepository.createPurchase({
       date: dataCompra,
       total_price: total,
+      hash,
       supplier: {
         connect: {
           id_supplier: idSupplier,
@@ -55,7 +57,7 @@ export class PurchaseUseCase {
     });
     const purchaseId = purchase.id_purchase;
 
-    const purchaseItems = await this.PurchaseRepository.createManyPurchaseItems(
+    await this.PurchaseRepository.createManyPurchaseItems(
       result.map((item) => ({
         id_purchase: purchaseId,
         id_product: item.id,
@@ -70,13 +72,40 @@ export class PurchaseUseCase {
       })),
     );
     return {
-      result,
-      purchaseId,
-      // return {
-      //   date,
-      //   items: result,
-      //   total,
-      // };
+      dataCompra,
+      items: result,
+      hash: hash,
+      total,
     };
+  }
+
+  async createHash(
+    data: PurchaseDto,
+    items: { id: string; quantity: number; unitPrice: number }[],
+  ): Promise<string> {
+    const hash = crypto
+      .createHash('sha256')
+      .update(
+        JSON.stringify({
+          supplier: data.id_supplier,
+          date: data.date,
+          items: items
+            .map((i) => ({
+              id: i.id,
+              quantity: i.quantity,
+              price: i.unitPrice,
+            }))
+            .sort((a, b) => a.id.localeCompare(b.id)),
+        }),
+      )
+      .digest('hex');
+
+    const exists = await this.PurchaseRepository.findByHash(hash);
+
+    if (exists) {
+      throw new ConflictException('Compra duplicada');
+    }
+
+    return hash;
   }
 }

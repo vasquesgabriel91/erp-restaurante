@@ -25,4 +25,11 @@ export class PurchaseRepository {
   ) {
     return await this.prisma.product_supplier.createMany({ data });
   }
+  async findByHash(hash: string): Promise<Purchase | null> {
+    return await this.prisma.purchase.findUnique({
+      where: {
+        hash,
+      },
+    });
+  }
 }

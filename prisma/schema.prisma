@@ -41,6 +41,7 @@ model Purchase {
   id_supplier    String           @db.Uuid
   total_price    Float
   date           String
+  hash        String @unique 
   purchase_items Purchase_items[]
   supplier            Supplier @relation(fields: [id_supplier], references: [id_supplier])
   createdAt      DateTime         @default(now())
