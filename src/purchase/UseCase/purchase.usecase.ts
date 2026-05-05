@@ -9,7 +9,8 @@ export class PurchaseUseCase {
 
   async execute(data: PurchaseDto) {
     const idProducts = data.items.map((i) => i.id_product);
-
+    const idSupplier = data.id_supplier;
+    const dataCompra = data.date;
     const products = await this.PurchaseRepository.getAllProducts(idProducts);
 
     // transforma banco em lookup rápido
@@ -36,17 +37,40 @@ export class PurchaseUseCase {
 
         return {
           id: req.id_product,
-          originalUnit: req.unit_measurement,
-          dbUnit: unitdb,
           quantity: convertedValue,
           unitPrice,
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
     const total = result.reduce((acc, item) => acc + item.unitPrice, 0);
+
+    const purchase = await this.PurchaseRepository.createPurchase({
+      date: dataCompra,
+      total_price: total,
+      supplier: {
+        connect: {
+          id_supplier: idSupplier,
+        },
+      },
+    });
+    const purchaseId = purchase.id_purchase;
+
+    await this.PurchaseRepository.createManyPurchaseItems(
+      result.map((item) => ({
+        id_purchase: purchaseId,
+        id_product: item.id,
+        quantity: item.quantity,
+        unit_price: item.unitPrice,
+      })),
+    );
     return {
-      items: result,
-      total,
+      result,
+      purchaseId,
+      // return {
+      //   date,
+      //   items: result,
+      //   total,
+      // };
     };
   }
 }

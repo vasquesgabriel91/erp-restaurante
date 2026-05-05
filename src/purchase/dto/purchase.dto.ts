@@ -10,7 +10,8 @@ import { Type } from 'class-transformer';
 import type { Unit } from '../domain/converter.unit.measurement';
 
 export class PurchaseItemDto {
-  @IsString({ message: 'O campo id do produto é obrigatório' })
+  @IsNotEmpty({ message: 'O campo produto é obrigatório' })
+  @IsString()
   id_product!: string;
 
   @IsNotEmpty({ message: 'O campo preço unitário é obrigatório' })
@@ -33,6 +34,11 @@ export class PurchaseDto {
   @Type(() => PurchaseItemDto)
   items!: PurchaseItemDto[];
 
-  @IsString({ message: 'O campo data é obrigatório' })
+  @IsNotEmpty({ message: 'O campo data é obrigatório' })
+  @IsString()
   date!: string;
+
+  @IsNotEmpty({ message: 'O campo fornecedor é obrigatório' })
+  @IsString()
+  id_supplier!: string;
 }
