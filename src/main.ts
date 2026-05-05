@@ -20,6 +20,7 @@ async function bootstrap() {
     .setDescription('API para gerenciamento de compras em restaurante')
     .setVersion('1.0')
     .addTag('Restaurante')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

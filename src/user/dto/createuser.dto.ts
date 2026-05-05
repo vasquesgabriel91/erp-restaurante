@@ -1,10 +1,13 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'O nome de usuário é obrigatório' })
   @IsString()
+  @ApiProperty()
   userName!: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty({ message: 'A senha é obrigatória' })
   @MinLength(8, { message: 'A senha deve ter no mínimo 8 caracteres' })

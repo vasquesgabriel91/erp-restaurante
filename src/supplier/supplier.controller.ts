@@ -13,7 +13,9 @@ import { SupplierUseCase } from './useCase/supplier.usecase';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorators';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Supplier')
 @Controller('supplier')
 export class SupplierController {
   constructor(private SupplierUseCase: SupplierUseCase) {}
@@ -21,6 +23,8 @@ export class SupplierController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
   @Post()
+  @ApiOperation({ summary: 'Criar Supplier' })
+  @ApiResponse({ status: 200, description: 'Supplier criado com sucesso' })
   async create(@Body() body: SupplierDto) {
     return this.SupplierUseCase.execute(body);
   }
@@ -28,6 +32,11 @@ export class SupplierController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
   @Get('getAll')
+  @ApiOperation({ summary: 'Lista todos os Supplier' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de Supplier retornada com sucesso',
+  })
   async getAll() {
     return this.SupplierUseCase.getAll();
   }
@@ -35,12 +44,23 @@ export class SupplierController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
   @Get(':id')
+  @ApiOperation({ summary: 'Busca Supplier por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Supplier encontrado com sucesso',
+  })
   async findById(@Param('id') id: string) {
     return this.SupplierUseCase.findById(id);
   }
+
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
   @Delete(':id')
+  @ApiOperation({ summary: 'Deletar Supplier por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Supplier deletado com sucesso',
+  })
   async delete(@Param('id') id: string) {
     return this.SupplierUseCase.delete(id);
   }
@@ -48,6 +68,11 @@ export class SupplierController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
   @Put(':id')
+  @ApiOperation({ summary: 'Atualizar Supplier por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Supplier atualizado com sucesso',
+  })
   async update(@Param('id') id: string, @Body() body: SupplierDto) {
     return this.SupplierUseCase.update(id, body);
   }
