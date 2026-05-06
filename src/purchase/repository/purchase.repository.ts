@@ -70,4 +70,19 @@ export class PurchaseRepository {
       },
     });
   }
+
+  async getPurchasesByIds(id: string[]) {
+    return await this.prisma.purchase.findMany({
+      where: {
+        id_purchase: { in: id },
+      },
+      include: {
+        purchase_items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+  }
 }

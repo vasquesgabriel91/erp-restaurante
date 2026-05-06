@@ -66,7 +66,7 @@ export class ProductController {
   @ApiOperation({ summary: 'Atualizar Product por ID' })
   @ApiResponse({ status: 200, description: 'Product atualizado com sucesso' })
   async update(
-    @Param('id') id: string,
+    @Param(':id') id: string,
     @Body() data: CreateProductDto,
   ): Promise<Product> {
     return this.ProductUseCase.update(id, data);

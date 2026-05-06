@@ -145,4 +145,8 @@ export class PurchaseUseCase {
   async getAllPurchases() {
     return await this.PurchaseRepository.getAllPurchases();
   }
+
+  async getById(id: string) {
+    return await this.PurchaseRepository.getPurchasesByIds([id]);
+  }
 }

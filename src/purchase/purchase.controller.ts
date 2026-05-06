@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { PurchaseUseCase } from './UseCase/purchase.usecase';
 
 import { PurchaseDto } from './dto/purchase.dto';
@@ -28,5 +28,13 @@ export class PurchaseController {
   @ApiResponse({ status: 200, description: 'Lista de Purchases' })
   async getAll() {
     return this.purchaseUseCase.getAllPurchases();
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Listar Purchase por ID' })
+  @ApiResponse({ status: 200, description: 'Purchase encontrada' })
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    return this.purchaseUseCase.getById(id);
   }
 }
