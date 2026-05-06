@@ -13,7 +13,12 @@ import { SupplierUseCase } from './useCase/supplier.usecase';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorators';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Supplier')
 @Controller('supplier')
@@ -22,6 +27,7 @@ export class SupplierController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Criar Supplier' })
   @ApiResponse({ status: 200, description: 'Supplier criado com sucesso' })
@@ -31,6 +37,7 @@ export class SupplierController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Get('getAll')
   @ApiOperation({ summary: 'Lista todos os Supplier' })
   @ApiResponse({
@@ -43,6 +50,7 @@ export class SupplierController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({ summary: 'Busca Supplier por ID' })
   @ApiResponse({
@@ -55,6 +63,7 @@ export class SupplierController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: 'Deletar Supplier por ID' })
   @ApiResponse({
@@ -67,6 +76,7 @@ export class SupplierController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Put(':id')
   @ApiOperation({ summary: 'Atualizar Supplier por ID' })
   @ApiResponse({

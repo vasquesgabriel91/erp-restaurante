@@ -17,14 +17,17 @@ export class PurchaseRepository {
     });
     return products;
   }
+
   async createManyPurchaseItems(data: Prisma.Purchase_itemsCreateManyInput[]) {
     return await this.prisma.purchase_items.createMany({ data });
   }
+
   async createManyProductSupplier(
     data: Prisma.Product_supplierCreateManyInput[],
   ) {
     return await this.prisma.product_supplier.createMany({ data });
   }
+
   async findByHash(hash: string): Promise<Purchase | null> {
     return await this.prisma.purchase.findUnique({
       where: {
@@ -32,9 +35,27 @@ export class PurchaseRepository {
       },
     });
   }
+
   async createStockMovement(
     data: Prisma.Movement_stockCreateManyInput[],
   ): Promise<Prisma.BatchPayload> {
     return await this.prisma.movement_stock.createMany({ data });
+  }
+
+  async updateQuantityProduct(
+    items: { id_product: string; quantity: number }[],
+  ) {
+    return await this.prisma.$transaction(
+      items.map((item) =>
+        this.prisma.product.update({
+          where: {
+            id_product: item.id_product,
+          },
+          data: {
+            current_quantity: item.quantity,
+          },
+        }),
+      ),
+    );
   }
 }

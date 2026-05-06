@@ -1,3 +1,4 @@
+import { Product } from '@prisma/client';
 import { UnitConverter } from '../domain/converter.unit.measurement';
 import { PurchaseDto } from '../dto/purchase.dto';
 import { PurchaseRepository } from '../repository/purchase.repository';
@@ -43,8 +44,11 @@ export class PurchaseUseCase {
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
+
     const total = result.reduce((acc, item) => acc + item.unitPrice, 0);
+
     const hash = await this.createHash(data, result);
+
     const purchase = await this.PurchaseRepository.createPurchase({
       date: dataCompra,
       total_price: total,
@@ -65,13 +69,23 @@ export class PurchaseUseCase {
         unit_price: item.unitPrice,
       })),
     );
+
     await this.PurchaseRepository.createManyProductSupplier(
       result.map((item) => ({
         id_supplier: idSupplier,
         id_product: item.id,
       })),
     );
-    await this.processedItemForStock(result);
+
+    const processedQuantityOfProducts = this.processedItemForStock(
+      result,
+      products,
+    );
+
+    await this.PurchaseRepository.updateQuantityProduct(
+      processedQuantityOfProducts,
+    );
+
     return {
       dataCompra,
       items: result,
@@ -110,14 +124,21 @@ export class PurchaseUseCase {
     return hash;
   }
 
-  async processedItemForStock(item: { id: string; quantity: number }[]) {
-    const itemProcessed = item.map((i) => ({
-      id_product: i.id,
-      quantity: i.quantity,
-      type: 'in',
-      origin: 'purchase',
-    }));
+  processedItemForStock(
+    result: { id: string; quantity: number }[],
+    products: Product[],
+  ) {
+    const processedItems = products.map((p) => {
+      const item = result.find((i) => i.id === p.id_product);
+      if (!item) {
+        throw new Error(`Produto ${p.id_product} não encontrado no result`);
+      }
 
-    return await this.PurchaseRepository.createStockMovement(itemProcessed);
+      return {
+        id_product: p.id_product,
+        quantity: p.current_quantity + item.quantity,
+      };
+    });
+    return processedItems;
   }
 }

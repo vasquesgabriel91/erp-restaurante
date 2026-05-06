@@ -11,7 +11,12 @@ import {
 import { ProductUseCase } from './useCases/product.usecase';
 import { CreateProductDto } from './dto/createproduct.dto';
 import { Product } from '@prisma/client';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorators';
@@ -23,6 +28,7 @@ export class ProductController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Post()
   @ApiOperation({ summary: 'Criar Product' })
   @ApiResponse({ status: 200, description: 'Product criado com sucesso' })
@@ -32,6 +38,7 @@ export class ProductController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({ summary: 'Obter Product por ID' })
   @ApiResponse({ status: 200, description: 'Product encontrado' })
@@ -41,6 +48,7 @@ export class ProductController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Get()
   @ApiOperation({ summary: 'Listar todos os Product' })
   @ApiResponse({
@@ -53,6 +61,7 @@ export class ProductController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Put(':id')
   @ApiOperation({ summary: 'Atualizar Product por ID' })
   @ApiResponse({ status: 200, description: 'Product atualizado com sucesso' })
@@ -65,6 +74,7 @@ export class ProductController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: 'Deletar Product por ID' })
   @ApiResponse({ status: 200, description: 'Product deletado com sucesso' })
