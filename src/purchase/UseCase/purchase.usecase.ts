@@ -141,4 +141,8 @@ export class PurchaseUseCase {
     });
     return processedItems;
   }
+
+  async getAllPurchases() {
+    return await this.PurchaseRepository.getAllPurchases();
+  }
 }

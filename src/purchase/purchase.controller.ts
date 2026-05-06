@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { PurchaseUseCase } from './UseCase/purchase.usecase';
 
 import { PurchaseDto } from './dto/purchase.dto';
@@ -20,5 +20,13 @@ export class PurchaseController {
   @ApiResponse({ status: 200, description: 'Purchase criada com sucesso' })
   async create(@Body() body: PurchaseDto) {
     return this.purchaseUseCase.execute(body);
+  }
+
+  @Get()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Listar todas as Purchases' })
+  @ApiResponse({ status: 200, description: 'Lista de Purchases' })
+  async getAll() {
+    return this.purchaseUseCase.getAllPurchases();
   }
 }

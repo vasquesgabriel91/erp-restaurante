@@ -58,4 +58,16 @@ export class PurchaseRepository {
       ),
     );
   }
+
+  async getAllPurchases() {
+    return await this.prisma.purchase.findMany({
+      include: {
+        purchase_items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+  }
 }
