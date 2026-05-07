@@ -34,6 +34,7 @@ model Product {
   purchase_items   Purchase_items[]
   product_supplier Product_supplier[]
   movement_stock   Movement_stock[]
+  dish              Dish[]
   createdAt        DateTime         @default(now())
 }
 
@@ -83,4 +84,23 @@ model Movement_stock {
   origin            String
   createdAt         DateTime @default(now())
   product           Product  @relation(fields: [id_product], references: [id_product])
+}
+
+model Recipe_Dish {
+  id_recipe_dish String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name_dish	String
+  description_dish String	
+  selling_price_dish Float
+  available_dish Boolean
+  createdAt DateTime @default(now())
+  dish Dish[]  
+}
+
+model Dish {
+  id_dish String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quantity Float
+  id_recipe_dish String   @db.Uuid
+  id_product String   @db.Uuid
+  recipe_dish Recipe_Dish @relation(fields: [id_recipe_dish], references: [id_recipe_dish])
+  product Product @relation(fields: [id_product], references: [id_product])
 }
