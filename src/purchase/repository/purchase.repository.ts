@@ -71,10 +71,10 @@ export class PurchaseRepository {
     });
   }
 
-  async getPurchasesByIds(id: string[]) {
+  async getPurchasesByIds(id: string) {
     return await this.prisma.purchase.findMany({
       where: {
-        id_purchase: { in: id },
+        id_purchase: id,
       },
       include: {
         purchase_items: {
@@ -82,6 +82,14 @@ export class PurchaseRepository {
             product: true,
           },
         },
+      },
+    });
+  }
+
+  async deletePurchase(id: string) {
+    return await this.prisma.purchase.delete({
+      where: {
+        id_purchase: id,
       },
     });
   }

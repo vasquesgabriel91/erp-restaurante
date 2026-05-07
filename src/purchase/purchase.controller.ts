@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { PurchaseUseCase } from './UseCase/purchase.usecase';
 
 import { PurchaseDto } from './dto/purchase.dto';
@@ -36,5 +36,13 @@ export class PurchaseController {
   @Get(':id')
   async getById(@Param('id') id: string) {
     return this.purchaseUseCase.getById(id);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Deletar Purchase por ID' })
+  @ApiResponse({ status: 200, description: 'Purchase deletada com sucesso' })
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.purchaseUseCase.delete(id);
   }
 }

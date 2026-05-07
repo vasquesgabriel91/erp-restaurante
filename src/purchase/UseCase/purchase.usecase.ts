@@ -147,6 +147,10 @@ export class PurchaseUseCase {
   }
 
   async getById(id: string) {
-    return await this.PurchaseRepository.getPurchasesByIds([id]);
+    return await this.PurchaseRepository.getPurchasesByIds(id);
+  }
+
+  async delete(id: string) {
+    return await this.PurchaseRepository.deletePurchase(id);
   }
 }
