@@ -98,9 +98,10 @@ model Recipe_Dish {
 
 model Dish {
   id_dish String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  quantity Float
   id_recipe_dish String   @db.Uuid
   id_product String   @db.Uuid
+  quantity Float
+  unit_measurement String
   recipe_dish Recipe_Dish @relation(fields: [id_recipe_dish], references: [id_recipe_dish])
   product Product @relation(fields: [id_product], references: [id_product])
 }

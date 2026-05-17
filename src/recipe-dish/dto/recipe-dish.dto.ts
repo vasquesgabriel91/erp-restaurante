@@ -7,18 +7,18 @@ import {
   IsBoolean,
   ValidateNested,
 } from 'class-validator';
-import { CreateDishItemDto } from './dish.dto';
+import { DishItemDto } from './dish.item.dto';
 
 export class recipeDishDto {
   @ApiProperty()
   @IsNotEmpty({ message: 'O nome do prato é obrigatório' })
   @IsString()
-  nameDish!: string;
+  name_dish!: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'A Descrição do prato é obrigatória' })
   @IsString()
-  descriptionDish!: string;
+  description_dish!: string;
 
   @ApiProperty()
   @IsNotEmpty({ message: 'O Preço do prato é obrigatório ' })
@@ -31,6 +31,6 @@ export class recipeDishDto {
   available_dish!: boolean;
 
   @ValidateNested({ each: true })
-  @Type(() => CreateDishItemDto)
-  dishes!: CreateDishItemDto[];
+  @Type(() => DishItemDto)
+  dishes!: DishItemDto[];
 }

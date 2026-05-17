@@ -4,9 +4,11 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class PurchaseRepository {
   constructor(private prisma: PrismaService) {}
+
   async createPurchase(data: Prisma.PurchaseCreateInput): Promise<Purchase> {
     return await this.prisma.purchase.create({ data });
   }
+
   async getAllProducts(idProduct: string[]): Promise<Product[]> {
     const products = await this.prisma.product.findMany({
       where: {
