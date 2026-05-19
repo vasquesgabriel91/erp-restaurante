@@ -11,7 +11,7 @@ export class RecipeDishUseCase {
     private readonly prismaService: PrismaService,
   ) {}
 
-  private async findProductById(
+  private async findIfExistsProductById(
     products: CreateDishRepository[],
   ): Promise<Product[] | null> {
     const idProduct = products.map((i) => i.idProduct);
@@ -135,7 +135,7 @@ export class RecipeDishUseCase {
       unitMeasurement: i.unit_measurement,
     }));
 
-    await this.findProductById(products);
+    await this.findIfExistsProductById(products);
 
     const insertRecipeDish = {
       nameDish: data.name_dish,
