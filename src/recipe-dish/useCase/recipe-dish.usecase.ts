@@ -17,7 +17,8 @@ export class RecipeDishUseCase {
       unitMeasurement: i.unit_measurement,
     }));
     const idProduct = product.map((i) => i.idProduct);
-    const findProductbyId = await this.RecipeDishRepository.findById(idProduct);
+    const findProductbyId =
+      await this.RecipeDishRepository.findProductById(idProduct);
 
     if (findProductbyId.length !== idProduct.length) {
       const foundIds = findProductbyId.map((p) => p.id_product);
@@ -97,6 +98,13 @@ export class RecipeDishUseCase {
   }
   async getAll() {
     const recipeDish = await this.RecipeDishRepository.getAll();
+    if (!recipeDish) throw new ConflictException('Nenhum prato encontrado');
+
+    return recipeDish;
+  }
+  async findById(id: string) {
+    const recipeDish = await this.RecipeDishRepository.findById(id);
+    if (!recipeDish) throw new ConflictException('Prato não encontrado');
     return recipeDish;
   }
 }

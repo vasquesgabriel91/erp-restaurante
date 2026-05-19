@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -26,8 +26,21 @@ export class RecipeDishController {
     return this.RecipeDishUseCase.create(body);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Listar todos os pratos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de pratos retornada com sucesso',
+  })
   @Get()
   async getAll() {
     return this.RecipeDishUseCase.getAll();
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: string) {
+    return this.RecipeDishUseCase.findById(id);
   }
 }

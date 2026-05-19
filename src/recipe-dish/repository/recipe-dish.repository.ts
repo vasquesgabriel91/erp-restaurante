@@ -8,7 +8,7 @@ import { CreateDishRepository } from '../interface/dish.items.repository.interfa
 export class RecipeDishRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findById(idProduct: string[]): Promise<Product[]> {
+  async findProductById(idProduct: string[]): Promise<Product[]> {
     const productId = await this.prisma.product.findMany({
       where: {
         id_product: {
@@ -73,6 +73,17 @@ export class RecipeDishRepository {
   }
   async getAll() {
     const recipeDish = await this.prisma.recipe_Dish.findMany({
+      include: {
+        dish: true,
+      },
+    });
+    return recipeDish;
+  }
+  async findById(id: string) {
+    const recipeDish = await this.prisma.recipe_Dish.findUnique({
+      where: {
+        id_recipe_dish: id,
+      },
       include: {
         dish: true,
       },
