@@ -3,12 +3,31 @@ import { RecipeDishRepository } from '../repository/recipe-dish.repository';
 import { recipeDishDto } from '../dto/recipe-dish.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDishRepository } from '../interface/dish.items.repository.interface';
+import { Product } from '@prisma/client';
 @Injectable()
 export class RecipeDishUseCase {
   constructor(
     private RecipeDishRepository: RecipeDishRepository,
     private readonly prismaService: PrismaService,
   ) {}
+
+  private async findProductById(
+    products: CreateDishRepository[],
+  ): Promise<Product[] | null> {
+    const idProduct = products.map((i) => i.idProduct);
+
+    const findProductbyId =
+      await this.RecipeDishRepository.findProductById(idProduct);
+
+    if (findProductbyId.length !== idProduct.length) {
+      const foundIds = findProductbyId.map((p) => p.id_product);
+      const missingIds = idProduct.filter((id) => !foundIds.includes(id));
+      throw new ConflictException(
+        `Os seguintes produtos não existem: ${missingIds.join(', ')}`,
+      );
+    }
+    return findProductbyId;
+  }
 
   async create(data: recipeDishDto) {
     const product: CreateDishRepository[] = data.dishes.map((i) => ({
@@ -96,6 +115,7 @@ export class RecipeDishUseCase {
       createRecipeDish,
     };
   }
+
   async getAll() {
     const recipeDish = await this.RecipeDishRepository.getAll();
     if (!recipeDish) throw new ConflictException('Nenhum prato encontrado');
@@ -106,6 +126,35 @@ export class RecipeDishUseCase {
     const findRecipeDish = await this.RecipeDishRepository.findById(id);
     if (!findRecipeDish) throw new ConflictException('Prato não encontrado');
     return findRecipeDish;
+  }
+
+  async update(id: string, data: recipeDishDto) {
+    const products = data.dishes.map((i) => ({
+      idProduct: i.id_product,
+      quantityProduct: i.quantity,
+      unitMeasurement: i.unit_measurement,
+    }));
+
+    await this.findProductById(products);
+
+    const insertRecipeDish = {
+      nameDish: data.name_dish,
+      descriptionDish: data.description_dish,
+      sellingPriceDish: data.selling_price_dish,
+      availableDish: data.available_dish,
+    };
+
+    const findRecipeDish = await this.RecipeDishRepository.findById(id);
+    if (!findRecipeDish) throw new ConflictException('Prato não encontrado');
+
+    const dishAlreadyExists =
+      await this.RecipeDishRepository.findDishByNameAndId(
+        insertRecipeDish.nameDish,
+        id,
+      );
+
+    if (dishAlreadyExists)
+      throw new ConflictException('Já existe um prato com esse nome');
   }
 
   async delete(id: string) {

@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -61,6 +62,10 @@ export class RecipeDishController {
     return this.RecipeDishUseCase.findById(id);
   }
 
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() body: recipeDishDto) {
+    return this.RecipeDishUseCase.update(id, body);
+  }
   @Delete(':id')
   async delete(@Param('id') id: string) {
     return this.RecipeDishUseCase.delete(id);

@@ -30,6 +30,20 @@ export class RecipeDishRepository {
     });
     return findDishByName;
   }
+  async findDishByNameAndId(
+    nameDish: string,
+    id: string,
+  ): Promise<Recipe_Dish | null> {
+    const findDishByName = await this.prisma.recipe_Dish.findFirst({
+      where: {
+        name_dish: nameDish,
+        NOT: {
+          id_recipe_dish: id,
+        },
+      },
+    });
+    return findDishByName;
+  }
 
   async findRecipeByIdDish(
     id_recipe_dish: string,
