@@ -95,4 +95,8 @@ export class RecipeDishUseCase {
       createRecipeDish,
     };
   }
+  async getAll() {
+    const recipeDish = await this.RecipeDishRepository.getAll();
+    return recipeDish;
+  }
 }

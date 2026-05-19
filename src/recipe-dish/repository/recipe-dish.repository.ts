@@ -71,4 +71,12 @@ export class RecipeDishRepository {
       })),
     });
   }
+  async getAll() {
+    const recipeDish = await this.prisma.recipe_Dish.findMany({
+      include: {
+        dish: true,
+      },
+    });
+    return recipeDish;
+  }
 }

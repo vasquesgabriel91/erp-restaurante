@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -24,5 +24,10 @@ export class RecipeDishController {
   @Post()
   async create(@Body() body: recipeDishDto) {
     return this.RecipeDishUseCase.create(body);
+  }
+
+  @Get()
+  async getAll() {
+    return this.RecipeDishUseCase.getAll();
   }
 }
