@@ -80,7 +80,7 @@ export class RecipeDishUseCase {
           tx,
         );
 
-        const createDish = await this.RecipeDishRepository.createDish(
+        await this.RecipeDishRepository.createDish(
           recipeDish.id_recipe_dish,
           product,
           tx,
@@ -88,7 +88,7 @@ export class RecipeDishUseCase {
 
         return {
           recipeDish,
-          items: createDish,
+          product,
         };
       },
     );
