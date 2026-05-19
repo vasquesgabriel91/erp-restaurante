@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -39,8 +47,22 @@ export class RecipeDishController {
     return this.RecipeDishUseCase.getAll();
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Buscar prato por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Prato encontrado com sucesso',
+  })
+  @ApiResponse({ status: 404, description: 'Prato não encontrado' })
   @Get(':id')
   async findById(@Param('id') id: string) {
     return this.RecipeDishUseCase.findById(id);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.RecipeDishUseCase.delete(id);
   }
 }

@@ -103,8 +103,18 @@ export class RecipeDishUseCase {
     return recipeDish;
   }
   async findById(id: string) {
-    const recipeDish = await this.RecipeDishRepository.findById(id);
-    if (!recipeDish) throw new ConflictException('Prato não encontrado');
-    return recipeDish;
+    const findRecipeDish = await this.RecipeDishRepository.findById(id);
+    if (!findRecipeDish) throw new ConflictException('Prato não encontrado');
+    return findRecipeDish;
+  }
+
+  async delete(id: string) {
+    const findRecipeDish = await this.RecipeDishRepository.findById(id);
+    if (!findRecipeDish) throw new ConflictException('Prato não encontrado');
+    const recipeDish = await this.RecipeDishRepository.delete(id);
+    return {
+      message: 'Prato deletado com sucesso',
+      recipeDish,
+    };
   }
 }

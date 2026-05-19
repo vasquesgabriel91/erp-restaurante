@@ -6,7 +6,10 @@ import { CreateDishRepository } from '../interface/dish.items.repository.interfa
 
 @Injectable()
 export class RecipeDishRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async findProductById(idProduct: string[]): Promise<Product[]> {
     const productId = await this.prisma.product.findMany({
@@ -71,7 +74,7 @@ export class RecipeDishRepository {
       })),
     });
   }
-  async getAll() {
+  async getAll(): Promise<Recipe_Dish[]> {
     const recipeDish = await this.prisma.recipe_Dish.findMany({
       include: {
         dish: true,
@@ -89,5 +92,21 @@ export class RecipeDishRepository {
       },
     });
     return recipeDish;
+  }
+
+  async delete(id: string): Promise<Recipe_Dish | void> {
+    const deleteDish = await this.prismaService.$transaction(async (tx) => {
+      await tx.dish.deleteMany({
+        where: {
+          id_recipe_dish: id,
+        },
+      });
+      await tx.recipe_Dish.delete({
+        where: {
+          id_recipe_dish: id,
+        },
+      });
+    });
+    return deleteDish;
   }
 }
