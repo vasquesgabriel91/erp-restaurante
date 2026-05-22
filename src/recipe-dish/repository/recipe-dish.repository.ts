@@ -108,6 +108,49 @@ export class RecipeDishRepository {
     return recipeDish;
   }
 
+  async updateDish(
+    id: string,
+    data: CreateRecipeDishRepository,
+    tx: Prisma.TransactionClient,
+  ) {
+    const updateRecipeDish = await tx.recipe_Dish.update({
+      where: {
+        id_recipe_dish: id,
+      },
+      data: {
+        name_dish: data.nameDish,
+        description_dish: data.descriptionDish,
+        selling_price_dish: data.sellingPriceDish,
+        available_dish: data.availableDish,
+      },
+    });
+    return updateRecipeDish;
+  }
+
+  async updateManyRecipe(
+    id: string,
+    products: CreateDishRepository[],
+    tx: Prisma.TransactionClient,
+  ) {
+    const deleteDishMany = await tx.dish.deleteMany({
+      where: {
+        id_recipe_dish: id,
+      },
+    });
+    const createDishMany = await tx.dish.createMany({
+      data: products.map((item) => ({
+        id_recipe_dish: id,
+        id_product: item.idProduct,
+        quantity: item.quantityProduct,
+        unit_measurement: item.unitMeasurement,
+      })),
+    });
+    return {
+      deleteDishMany,
+      createDishMany,
+    };
+  }
+
   async delete(id: string): Promise<Recipe_Dish | void> {
     const deleteDish = await this.prismaService.$transaction(async (tx) => {
       await tx.dish.deleteMany({

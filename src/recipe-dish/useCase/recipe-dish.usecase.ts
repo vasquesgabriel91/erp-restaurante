@@ -29,6 +29,47 @@ export class RecipeDishUseCase {
     return findProductbyId;
   }
 
+  private async checkDishNameAndRecipeConflict(
+    nameDish: string,
+    products: CreateDishRepository[],
+  ) {
+    const dishAlreadyExists =
+      await this.RecipeDishRepository.findDishByName(nameDish);
+
+    if (dishAlreadyExists) {
+      const currentRecipeDish =
+        await this.RecipeDishRepository.findRecipeByIdDish(
+          dishAlreadyExists.id_recipe_dish,
+        );
+
+      const newRecipe = products
+        .map((i) => ({
+          id_product: i.idProduct,
+          quantity: i.quantityProduct,
+          unit_measurement: i.unitMeasurement,
+        }))
+        .sort((a, b) => a.id_product.localeCompare(b.id_product));
+
+      const existingRecipe = currentRecipeDish
+        .map((i) => ({
+          id_product: i.id_product,
+          quantity: i.quantity,
+          unit_measurement: i.unit_measurement,
+        }))
+        .sort((a, b) => a.id_product.localeCompare(b.id_product));
+
+      const sameRecipe =
+        JSON.stringify(newRecipe) === JSON.stringify(existingRecipe);
+
+      if (sameRecipe) {
+        throw new ConflictException(
+          'Já existe um prato com o mesmo nome e receita',
+        );
+      }
+      throw new ConflictException('Já existe um prato com esse nome');
+    }
+  }
+
   async create(data: recipeDishDto) {
     const product: CreateDishRepository[] = data.dishes.map((i) => ({
       idProduct: i.id_product,
@@ -144,17 +185,31 @@ export class RecipeDishUseCase {
       availableDish: data.available_dish,
     };
 
-    const findRecipeDish = await this.RecipeDishRepository.findById(id);
-    if (!findRecipeDish) throw new ConflictException('Prato não encontrado');
+    await this.checkDishNameAndRecipeConflict(
+      insertRecipeDish.nameDish,
+      products,
+    );
 
-    const dishAlreadyExists =
-      await this.RecipeDishRepository.findDishByNameAndId(
-        insertRecipeDish.nameDish,
-        id,
-      );
+    const updateRecipeDish = await this.prismaService.$transaction(
+      async (tx) => {
+        const recipeDish = await this.RecipeDishRepository.updateDish(
+          id,
+          insertRecipeDish,
+          tx,
+        );
 
-    if (dishAlreadyExists)
-      throw new ConflictException('Já existe um prato com esse nome');
+        await this.RecipeDishRepository.updateManyRecipe(id, products, tx);
+
+        return {
+          recipeDish,
+          products,
+        };
+      },
+    );
+    return {
+      message: 'Prato atualizado com sucesso',
+      updateRecipeDish,
+    };
   }
 
   async delete(id: string) {
