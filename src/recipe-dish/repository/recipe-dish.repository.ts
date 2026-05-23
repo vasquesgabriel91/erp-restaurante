@@ -3,6 +3,9 @@ import { Prisma, Product, Recipe_Dish } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateRecipeDishRepository } from '../interface/recipe_dish.repository.interface';
 import { CreateDishRepository } from '../interface/dish.items.repository.interface';
+import { UpdateRecipeDishRepository } from '../interface/update.recipe.dish.repository.interface';
+import { removeUndefinedFields } from '../helpers/remove.undefined.field.helper';
+import { UpdateDishItemsRepository } from '../interface/update.dish.items.repository.interface';
 
 @Injectable()
 export class RecipeDishRepository {
@@ -74,6 +77,7 @@ export class RecipeDishRepository {
       },
     });
   }
+
   async createDish(
     idRecipeDish: string,
     product: CreateDishRepository[],
@@ -82,9 +86,9 @@ export class RecipeDishRepository {
     return await tx.dish.createMany({
       data: product.map((item) => ({
         id_recipe_dish: idRecipeDish,
-        id_product: item.idProduct,
-        quantity: item.quantityProduct,
-        unit_measurement: item.unitMeasurement,
+        id_product: item.id_product,
+        quantity: item.quantity,
+        unit_measurement: item.unit_measurement,
       })),
     });
   }
@@ -110,7 +114,7 @@ export class RecipeDishRepository {
 
   async updateDish(
     id: string,
-    data: CreateRecipeDishRepository,
+    data: UpdateRecipeDishRepository,
     tx: Prisma.TransactionClient,
   ) {
     const updateRecipeDish = await tx.recipe_Dish.update({
@@ -128,27 +132,32 @@ export class RecipeDishRepository {
   }
 
   async updateManyRecipe(
-    id: string,
-    products: CreateDishRepository[],
+    idRecipeDish: string,
+    products: Partial<UpdateDishItemsRepository>[],
     tx: Prisma.TransactionClient,
   ) {
-    const deleteDishMany = await tx.dish.deleteMany({
-      where: {
-        id_recipe_dish: id,
-      },
-    });
-    const createDishMany = await tx.dish.createMany({
-      data: products.map((item) => ({
-        id_recipe_dish: id,
-        id_product: item.idProduct,
-        quantity: item.quantityProduct,
-        unit_measurement: item.unitMeasurement,
-      })),
-    });
-    return {
-      deleteDishMany,
-      createDishMany,
-    };
+    await Promise.all(
+      products.map(async ({ id_dish, ...data }) => {
+        const formattedData = removeUndefinedFields({
+          ...data,
+          id_recipe_dish: idRecipeDish,
+        });
+
+        return await tx.dish.upsert({
+          where: {
+            id_dish: id_dish ?? '',
+          },
+
+          update: {
+            ...formattedData,
+          },
+
+          create: {
+            ...formattedData,
+          } as Prisma.DishUncheckedCreateInput,
+        });
+      }),
+    );
   }
 
   async delete(id: string): Promise<Recipe_Dish | void> {

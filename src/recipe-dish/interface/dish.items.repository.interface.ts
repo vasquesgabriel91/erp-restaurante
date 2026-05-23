@@ -1,5 +1,5 @@
 export interface CreateDishRepository {
-  idProduct: string;
-  quantityProduct: number;
-  unitMeasurement: string;
+  id_product: string;
+  quantity: number;
+  unit_measurement: string;
 }

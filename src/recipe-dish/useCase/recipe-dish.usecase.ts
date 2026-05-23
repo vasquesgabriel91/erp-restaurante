@@ -4,6 +4,7 @@ import { recipeDishDto } from '../dto/recipe-dish.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDishRepository } from '../interface/dish.items.repository.interface';
 import { Product } from '@prisma/client';
+import { removeUndefinedFields } from '../helpers/remove.undefined.field.helper';
 @Injectable()
 export class RecipeDishUseCase {
   constructor(
@@ -14,7 +15,7 @@ export class RecipeDishUseCase {
   private async findIfExistsProductById(
     products: CreateDishRepository[],
   ): Promise<Product[] | null> {
-    const idProduct = products.map((i) => i.idProduct);
+    const idProduct = products.map((i) => i.id_product);
 
     const findProductbyId =
       await this.RecipeDishRepository.findProductById(idProduct);
@@ -44,9 +45,9 @@ export class RecipeDishUseCase {
 
       const newRecipe = products
         .map((i) => ({
-          id_product: i.idProduct,
-          quantity: i.quantityProduct,
-          unit_measurement: i.unitMeasurement,
+          id_product: i.id_product,
+          quantity: i.quantity,
+          unit_measurement: i.unit_measurement,
         }))
         .sort((a, b) => a.id_product.localeCompare(b.id_product));
 
@@ -72,11 +73,11 @@ export class RecipeDishUseCase {
 
   async create(data: recipeDishDto) {
     const product: CreateDishRepository[] = data.dishes.map((i) => ({
-      idProduct: i.id_product,
-      quantityProduct: i.quantity,
-      unitMeasurement: i.unit_measurement,
+      id_product: i.id_product,
+      quantity: i.quantity,
+      unit_measurement: i.unit_measurement,
     }));
-    const idProduct = product.map((i) => i.idProduct);
+    const idProduct = product.map((i) => i.id_product);
     const findProductbyId =
       await this.RecipeDishRepository.findProductById(idProduct);
 
@@ -89,7 +90,6 @@ export class RecipeDishUseCase {
         `Os seguintes produtos não existem: ${missingIds.join(', ')}`,
       );
     }
-
     const insertRecipeDish = {
       nameDish: data.name_dish,
       descriptionDish: data.description_dish,
@@ -108,9 +108,9 @@ export class RecipeDishUseCase {
 
       const newRecipe = product
         .map((i) => ({
-          id_product: i.idProduct,
-          quantity: i.quantityProduct,
-          unit_measurement: i.unitMeasurement,
+          id_product: i.id_product,
+          quantity: i.quantity,
+          unit_measurement: i.unit_measurement,
         }))
         .sort((a, b) => a.id_product.localeCompare(b.id_product));
 
@@ -171,22 +171,23 @@ export class RecipeDishUseCase {
 
   async update(id: string, data: recipeDishDto) {
     const products = data.dishes.map((i) => ({
-      idProduct: i.id_product,
-      quantityProduct: i.quantity,
-      unitMeasurement: i.unit_measurement,
+      id_dish: i.id_dish,
+      id_product: i.id_product,
+      quantity: i.quantity,
+      unit_measurement: i.unit_measurement,
     }));
 
     await this.findIfExistsProductById(products);
 
-    const insertRecipeDish = {
+    const insertRecipeDish = removeUndefinedFields({
       nameDish: data.name_dish,
       descriptionDish: data.description_dish,
       sellingPriceDish: data.selling_price_dish,
       availableDish: data.available_dish,
-    };
+    });
 
     await this.checkDishNameAndRecipeConflict(
-      insertRecipeDish.nameDish,
+      insertRecipeDish.nameDish!,
       products,
     );
 
