@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class DishItemDto {
   @ApiProperty()
@@ -16,4 +22,9 @@ export class DishItemDto {
   @IsNotEmpty()
   @IsUUID()
   id_product!: string;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsUUID()
+  id_dish?: string;
 }

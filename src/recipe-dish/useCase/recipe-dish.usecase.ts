@@ -177,6 +177,19 @@ export class RecipeDishUseCase {
       unit_measurement: i.unit_measurement,
     }));
 
+    const currentRecipeDish = await this.RecipeDishRepository.findById(id);
+
+    if (!currentRecipeDish) {
+      throw new ConflictException('Recipe dish not found');
+    }
+
+    const incomingProductIds = products
+      .filter((i) => i.id_dish)
+      .map((i) => i.id_dish);
+
+    const toDelete = currentRecipeDish.dish.filter(
+      (dbItem) => !incomingProductIds.includes(dbItem.id_dish),
+    );
     await this.findIfExistsProductById(products);
 
     const insertRecipeDish = removeUndefinedFields({
@@ -198,6 +211,7 @@ export class RecipeDishUseCase {
           insertRecipeDish,
           tx,
         );
+        await this.RecipeDishRepository.deleteDishItems(toDelete, tx);
 
         await this.RecipeDishRepository.updateManyRecipe(id, products, tx);
 

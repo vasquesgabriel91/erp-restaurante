@@ -133,31 +133,41 @@ export class RecipeDishRepository {
 
   async updateManyRecipe(
     idRecipeDish: string,
-    products: Partial<UpdateDishItemsRepository>[],
+    products: UpdateDishItemsRepository[],
     tx: Prisma.TransactionClient,
   ) {
     await Promise.all(
       products.map(async ({ id_dish, ...data }) => {
-        const formattedData = removeUndefinedFields({
-          ...data,
-          id_recipe_dish: idRecipeDish,
-        });
+        if (id_dish) {
+          return tx.dish.update({
+            where: { id_dish },
+            data: removeUndefinedFields({
+              ...data,
+              id_recipe_dish: idRecipeDish,
+            }),
+          });
+        }
 
-        return await tx.dish.upsert({
-          where: {
-            id_dish: id_dish ?? '',
+        return tx.dish.create({
+          data: {
+            ...data,
+            id_recipe_dish: idRecipeDish,
           },
-
-          update: {
-            ...formattedData,
-          },
-
-          create: {
-            ...formattedData,
-          } as Prisma.DishUncheckedCreateInput,
         });
       }),
     );
+  }
+  async deleteDishItems(
+    items: { id_dish: string }[],
+    tx: Prisma.TransactionClient,
+  ) {
+    await tx.dish.deleteMany({
+      where: {
+        id_dish: {
+          in: items.map((i) => i.id_dish),
+        },
+      },
+    });
   }
 
   async delete(id: string): Promise<Recipe_Dish | void> {
