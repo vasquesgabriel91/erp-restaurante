@@ -11,10 +11,10 @@ import type { Unit } from '../domain/converter.unit.measurement';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PurchaseItemDto {
-  @IsNotEmpty({ message: 'O campo produto é obrigatório' })
+  @IsNotEmpty({ message: 'O campo nome do item é obrigatório' })
   @IsString()
   @ApiProperty()
-  id_product!: string;
+  name!: string;
 
   @IsNotEmpty({ message: 'O campo preço unitário é obrigatório' })
   @IsNumber()

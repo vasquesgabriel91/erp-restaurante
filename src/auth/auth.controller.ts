@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { LoginUseCase } from './useCases/LoginUseCase';
-import { CreateUserDto } from '../user/dto/createuser.dto';
+import { LoginDto } from './dto/login.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('auth')
@@ -11,7 +11,7 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Fazer login' })
   @ApiResponse({ status: 200, description: 'Login realizado com sucesso' })
-  login(@Body() body: CreateUserDto) {
+  login(@Body() body: LoginDto) {
     return this.loginUseCase.signIn(body.userName, body.passWord);
   }
 }

@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsOptional, IsEmail } from 'class-validator';
 import { IsCNPJ } from 'cnpj-universal';
 
 export class SupplierDto {
@@ -13,4 +13,14 @@ export class SupplierDto {
   @IsString()
   @IsCNPJ({ message: 'CNPJ inválido' })
   cnpj!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsEmail({}, { message: 'E-mail inválido' })
+  email?: string;
 }

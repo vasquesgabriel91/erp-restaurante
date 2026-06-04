@@ -39,6 +39,18 @@ export class ProductController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
   @ApiBearerAuth()
+  @Get('pending-purchases')
+  @ApiOperation({
+    summary: 'Itens comprados ainda não cadastrados no estoque',
+  })
+  @ApiResponse({ status: 200, description: 'Itens pendentes retornados' })
+  async getPendingPurchases() {
+    return this.ProductUseCase.getPendingPurchasedItems();
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({ summary: 'Obter Product por ID' })
   @ApiResponse({ status: 200, description: 'Product encontrado' })
@@ -66,7 +78,7 @@ export class ProductController {
   @ApiOperation({ summary: 'Atualizar Product por ID' })
   @ApiResponse({ status: 200, description: 'Product atualizado com sucesso' })
   async update(
-    @Param(':id') id: string,
+    @Param('id') id: string,
     @Body() data: CreateProductDto,
   ): Promise<Product> {
     return this.ProductUseCase.update(id, data);

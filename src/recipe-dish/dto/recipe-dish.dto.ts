@@ -5,6 +5,8 @@ import {
   IsString,
   IsNumber,
   IsBoolean,
+  IsOptional,
+  IsInt,
   ValidateNested,
 } from 'class-validator';
 import { DishItemDto } from './dish.item.dto';
@@ -29,6 +31,26 @@ export class recipeDishDto {
   @IsNotEmpty()
   @IsBoolean()
   available_dish!: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  image?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsInt()
+  serves?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  control_rule?: string;
 
   @ValidateNested({ each: true })
   @Type(() => DishItemDto)

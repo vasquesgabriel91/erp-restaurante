@@ -6,7 +6,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProductRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createProduct(data: Prisma.ProductCreateInput): Promise<Product> {
+  async createProduct(
+    data: Prisma.ProductUncheckedCreateInput,
+  ): Promise<Product> {
     try {
       return this.prisma.product.create({ data });
     } catch (error) {
@@ -36,13 +38,35 @@ export class ProductRepository {
   }
 
   async findAll(): Promise<Product[]> {
-    return this.prisma.product.findMany();
+    return this.prisma.product.findMany({
+      include: { supplier: true },
+      orderBy: { createdAt: 'asc' },
+    });
   }
 
-  async update(id: string, data: Prisma.ProductUpdateInput): Promise<Product> {
+  async update(
+    id: string,
+    data: Prisma.ProductUncheckedUpdateInput,
+  ): Promise<Product> {
     return this.prisma.product.update({
       where: { id_product: id },
       data,
+    });
+  }
+
+  // Purchase line items not yet promoted to a stock item, newest first.
+  async findPendingPurchaseItems() {
+    return this.prisma.purchase_items.findMany({
+      where: { id_product: null },
+      include: { purchase: { include: { supplier: true } } },
+      orderBy: { purchase: { createdAt: 'desc' } },
+    });
+  }
+
+  async linkPurchaseItemsToProduct(name: string, id_product: string) {
+    return this.prisma.purchase_items.updateMany({
+      where: { name, id_product: null },
+      data: { id_product },
     });
   }
 }

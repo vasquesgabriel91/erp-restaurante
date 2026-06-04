@@ -3,4 +3,8 @@ export interface CreateRecipeDishRepository {
   descriptionDish: string;
   sellingPriceDish: number;
   availableDish: boolean;
+  image?: string | null;
+  category?: string | null;
+  serves?: number | null;
+  controlRule?: string | null;
 }

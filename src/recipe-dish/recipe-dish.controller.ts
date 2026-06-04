@@ -36,7 +36,7 @@ export class RecipeDishController {
   }
 
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('GERENTE', 'BALCONISTA')
+  @Roles('GERENTE', 'BALCONISTA', 'GARCOM')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Listar todos os pratos' })
   @ApiResponse({
@@ -48,8 +48,15 @@ export class RecipeDishController {
     return this.RecipeDishUseCase.getAll();
   }
 
+  @ApiOperation({ summary: 'Cardápio público (sem login) — pratos disponíveis' })
+  @ApiResponse({ status: 200, description: 'Lista pública de pratos' })
+  @Get('public')
+  async getPublic() {
+    return this.RecipeDishUseCase.getPublic();
+  }
+
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('GERENTE', 'BALCONISTA')
+  @Roles('GERENTE', 'BALCONISTA', 'GARCOM')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Buscar prato por ID' })
   @ApiResponse({

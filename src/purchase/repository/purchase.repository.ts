@@ -20,6 +20,12 @@ export class PurchaseRepository {
     return products;
   }
 
+  async getProductsByNames(names: string[]): Promise<Product[]> {
+    return await this.prisma.product.findMany({
+      where: { name: { in: names } },
+    });
+  }
+
   async createManyPurchaseItems(data: Prisma.Purchase_itemsCreateManyInput[]) {
     return await this.prisma.purchase_items.createMany({ data });
   }

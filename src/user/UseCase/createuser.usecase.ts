@@ -22,6 +22,7 @@ export class CreateUserUseCase {
       userName: data.userName,
       passWord: hashedPassword,
       role,
+      name: data.name ?? null,
     });
   }
 }
