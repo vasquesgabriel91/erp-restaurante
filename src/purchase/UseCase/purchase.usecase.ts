@@ -45,10 +45,7 @@ export class PurchaseUseCase {
       };
     });
 
-    const total = lines.reduce(
-      (acc, l) => acc + l.unit_price * l.quantity,
-      0,
-    );
+    const total = lines.reduce((acc, l) => acc + l.unit_price * l.quantity, 0);
 
     const hash = await this.createHash(data, lines);
 

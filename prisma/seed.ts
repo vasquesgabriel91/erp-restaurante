@@ -8,9 +8,24 @@ async function main() {
   const prisma = new PrismaClient({ adapter });
 
   const seeds = [
-    { userName: 'admin', name: 'Administrador Global', role: 'GERENTE' as const, pass: 'admin' },
-    { userName: 'balcao', name: 'Operador de Balcão', role: 'BALCONISTA' as const, pass: 'balcao' },
-    { userName: 'garcom', name: 'Garçom Equipe A', role: 'GARCOM' as const, pass: 'garcom' },
+    {
+      userName: 'admin',
+      name: 'Administrador Global',
+      role: 'GERENTE' as const,
+      pass: 'admin',
+    },
+    {
+      userName: 'balcao',
+      name: 'Operador de Balcão',
+      role: 'BALCONISTA' as const,
+      pass: 'balcao',
+    },
+    {
+      userName: 'garcom',
+      name: 'Garçom Equipe A',
+      role: 'GARCOM' as const,
+      pass: 'garcom',
+    },
   ];
 
   for (const s of seeds) {
@@ -22,7 +37,9 @@ async function main() {
     });
   }
 
-  console.log('Seed OK: admin/balcao/garcom criados/atualizados (senha = o próprio login).');
+  console.log(
+    'Seed OK: admin/balcao/garcom criados/atualizados (senha = o próprio login).',
+  );
   await prisma.$disconnect();
 }
 

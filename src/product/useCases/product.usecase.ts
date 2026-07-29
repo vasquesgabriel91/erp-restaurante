@@ -27,7 +27,10 @@ export class ProductUseCase {
   // purchase.
   async getPendingPurchasedItems(): Promise<PendingPurchasedItem[]> {
     const items = await this.productRepository.findPendingPurchaseItems();
-    const byName = new Map<string, PendingPurchasedItem & { priceSum: number }>();
+    const byName = new Map<
+      string,
+      PendingPurchasedItem & { priceSum: number }
+    >();
 
     for (const it of items) {
       const acc = byName.get(it.name);
