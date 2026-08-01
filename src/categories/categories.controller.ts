@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -24,5 +24,13 @@ export class CategoriesController {
   @ApiResponse({ status: 200, description: 'Categoria criada com sucesso' })
   async create(@Body() body: CreateCategoryDto) {
     return this.CategoriesUseCase.execute(body);
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
+  @Get()
+  async getAllWithWhatsAppTrue() {
+    return this.CategoriesUseCase.getAllWithWhatsAppTrue();
   }
 }

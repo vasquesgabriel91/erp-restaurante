@@ -17,4 +17,7 @@ export class CategoriesUseCase {
       show_in_whatsapp,
     });
   }
+  async getAllWithWhatsAppTrue(): Promise<Categories[]> {
+    return this.CategoriesRepository.getAllWithWhatsAppTrue();
+  }
 }
