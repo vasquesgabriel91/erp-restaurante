@@ -26,6 +26,16 @@ export class CategoriesUseCase {
   async getAllWithWhatsAppTrue(): Promise<Categories[]> {
     return this.CategoriesRepository.getAllWithWhatsAppTrue();
   }
+
+  async getAllCategories(): Promise<Categories[]> {
+    return this.CategoriesRepository.getAllCategories();
+  }
+
+  async findById(id: string): Promise<Categories | null> {
+    const category = await this.CategoriesRepository.findById(id);
+    if (!category) throw new Error('Category not found');
+    return category;
+  }
   async deleteCategory(id: string): Promise<void> {
     const categoryExists = await this.CategoriesRepository.findByName(id);
     if (!categoryExists) throw new Error('Category not found');

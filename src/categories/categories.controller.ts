@@ -45,7 +45,30 @@ export class CategoriesController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('GERENTE', 'BALCONISTA')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Deletar todas as categorias' })
+  @Get()
+  @ApiOperation({ summary: 'Buscar todas as categorias' })
+  @ApiResponse({
+    status: 200,
+    description: 'Categorias retornadas com sucesso',
+  })
+  async getAll() {
+    return this.CategoriesUseCase.getAllCategories();
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Buscar categoria por ID' })
+  @ApiResponse({ status: 200, description: 'Categoria retornada com sucesso' })
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    return this.CategoriesUseCase.findById(id);
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Deletar categoria por ID' })
   @ApiResponse({ status: 200, description: 'Categorias deletadas com sucesso' })
   @Delete(':id')
   async delete(@Param('id') id: string) {

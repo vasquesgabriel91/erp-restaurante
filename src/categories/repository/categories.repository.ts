@@ -18,6 +18,14 @@ export class CategoriesRepository {
     });
   }
 
+  async findById(id: string): Promise<Categories | null> {
+    return await this.prisma.categories.findUnique({
+      where: {
+        id_category: id,
+      },
+    });
+  }
+
   async getAllWithWhatsAppTrue(): Promise<Categories[]> {
     return await this.prisma.categories.findMany({
       where: {
@@ -25,6 +33,11 @@ export class CategoriesRepository {
       },
     });
   }
+
+  async getAllCategories(): Promise<Categories[]> {
+    return await this.prisma.categories.findMany();
+  }
+
   async deleteCategory(id: string): Promise<void> {
     await this.prisma.categories.delete({
       where: {
