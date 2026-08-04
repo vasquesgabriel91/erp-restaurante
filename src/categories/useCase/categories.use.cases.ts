@@ -11,13 +11,24 @@ export class CategoriesUseCase {
     const name = data.name;
     const display_order = data.display_order;
     const show_in_whatsapp = data.show_in_whatsapp;
+    const show_in_app = data.show_in_app;
+
+    const categoryExists = await this.CategoriesRepository.findByName(name);
+    if (categoryExists) throw new Error('Category already exists');
+
     return this.CategoriesRepository.create({
       name,
       display_order,
       show_in_whatsapp,
+      show_in_app,
     });
   }
   async getAllWithWhatsAppTrue(): Promise<Categories[]> {
     return this.CategoriesRepository.getAllWithWhatsAppTrue();
+  }
+  async deleteCategory(id: string): Promise<void> {
+    const categoryExists = await this.CategoriesRepository.findByName(id);
+    if (!categoryExists) throw new Error('Category not found');
+    await this.CategoriesRepository.deleteCategory(id);
   }
 }

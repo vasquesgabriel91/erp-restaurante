@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -32,5 +40,15 @@ export class CategoriesController {
   @Get()
   async getAllWithWhatsAppTrue() {
     return this.CategoriesUseCase.getAllWithWhatsAppTrue();
+  }
+
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('GERENTE', 'BALCONISTA')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Deletar todas as categorias' })
+  @ApiResponse({ status: 200, description: 'Categorias deletadas com sucesso' })
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.CategoriesUseCase.deleteCategory(id);
   }
 }

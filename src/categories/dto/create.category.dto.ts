@@ -9,9 +9,13 @@ export class CreateCategoryDto {
 
   @ApiProperty()
   @IsNumber()
-  display_order!: number;
+  display_order?: number;
 
   @ApiProperty()
   @IsBoolean()
   show_in_whatsapp!: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  show_in_app?: boolean;
 }

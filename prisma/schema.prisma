@@ -168,5 +168,6 @@ model Categories {
   display_order Int
   recipes     Recipe_Dish[]
   show_in_whatsapp Boolean @default(false)
+  show_in_app Boolean @default(true)
   createdAt   DateTime @default(now())
 }
