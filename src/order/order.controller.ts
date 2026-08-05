@@ -20,7 +20,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { MoveTableDto } from './dto/move-table.dto';
 import { CloseTableDto } from './dto/close-table.dto';
-import { OrderUseCase } from './order.usecase';
+import { OrderUseCase } from './useCase/order.usecase';
 
 @ApiTags('Order')
 @Controller('order')

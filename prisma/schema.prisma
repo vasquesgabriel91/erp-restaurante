@@ -165,7 +165,7 @@ model Order_item {
 model Categories {
   id_category String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name        String
-  display_order Int
+  display_order Int?
   recipes     Recipe_Dish[]
   show_in_whatsapp Boolean @default(false)
   show_in_app Boolean @default(true)

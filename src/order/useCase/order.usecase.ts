@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { OrderRepository } from './repository/order.repository';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { OrderRepository } from '../repository/order.repository';
+import { CreateOrderDto } from '../dto/create-order.dto';
 
 @Injectable()
 export class OrderUseCase {

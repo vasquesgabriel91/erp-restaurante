@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateCategoryDto {
   @IsNotEmpty({ message: 'O nome da categoria é obrigatório' })
@@ -7,6 +13,7 @@ export class CreateCategoryDto {
   @ApiProperty()
   name!: string;
 
+  @IsOptional()
   @ApiProperty()
   @IsNumber()
   display_order?: number;
